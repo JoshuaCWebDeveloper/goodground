@@ -1,0 +1,17 @@
+goodloops.dyn.dnstools.be {
+    rewrite /profile/* /
+    reverse_proxy localhost:8080
+}
+
+goodgun.dyn.dnstools.be {
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade    websocket
+    }
+    reverse_proxy @websockets localhost:8765
+}
+
+goodpleroma.dyn.dnstools.be {
+    reverse_proxy localhost:4000
+}
+

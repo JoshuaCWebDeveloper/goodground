@@ -1,0 +1,58 @@
+version: '2'
+volumes:
+    postgres:
+    uploads:
+    static:
+    config:
+services:
+  caddy:
+    build: ./services/caddy
+    restart: always
+    depends_on:
+      - iris
+    network_mode: host
+    ports:
+      - "80:80"
+      - "443:443"
+  iris:
+    build: ./services/iris
+    restart: always
+    network_mode: host
+    expose:
+      - "8080"
+  gun:
+    build: ./services/gun
+    restart: always
+    network_mode: host
+  
+  db:
+    image:  arm64v8/postgres:12.9-alpine
+    container_name: pleroma_db
+    restart: always
+    environment:
+      POSTGRES_USER: pleroma
+      POSTGRES_PASSWORD: ChangeMe!
+      POSTGRES_DB: pleroma
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  pleroma:
+    build: ./services/docker-pleroma/
+    image: pleroma
+    container_name: pleroma_web
+    restart: always
+    ports:
+      - '4000:4000'
+    volumes:
+      - uploads:/var/lib/pleroma/uploads
+      - static:/var/lib/pleroma/static
+    environment:
+      DOMAIN: goodpleroma.dyn.dnstools.be
+      INSTANCE_NAME: Pleroma
+      ADMIN_EMAIL: admin@example.com
+      NOTIFY_EMAIL: notify@example.com
+      DB_USER: pleroma
+      DB_PASS: ChangeMe!
+      DB_NAME: pleroma
+    depends_on:
+      - db

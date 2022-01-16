@@ -1,0 +1,9 @@
+[submodule "services/iris/iris-messenger"]
+	path = services/iris/iris-messenger
+	url = https://github.com/irislib/iris-messenger
+[submodule "services/gun"]
+	path = services/gun
+	url = https://github.com/amark/gun
+[submodule "services/docker-pleroma"]
+	path = services/docker-pleroma
+	url = https://github.com/angristan/docker-pleroma
