@@ -7,3 +7,9 @@
 [submodule "services/docker-pleroma"]
 	path = services/docker-pleroma
 	url = https://github.com/angristan/docker-pleroma
+[submodule "services/balena-wireguard"]
+	path = services/balena-wireguard
+	url = https://github.com/klutchell/balena-wireguard
+[submodule "services/element/element-web"]
+	path = services/element/element-web
+	url = https://github.com/vector-im/element-web

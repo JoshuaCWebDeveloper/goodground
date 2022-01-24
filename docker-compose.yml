@@ -4,16 +4,141 @@ volumes:
     uploads:
     static:
     config:
+    synapse:
+    element:
+    dnsconfig:
+    sqldata:
+    netclient:
+    wireguard:
 services:
+  # wireguard:
+  #   build: ./services/wireguard
+  #   privileged: true
+  #   network_mode: host
+  #   ports: 
+  #     - "7980:7980"
+  #   labels:
+  #     io.balena.features.kernel-modules: 1
+  
+  # wirehub:
+  #   build: ./services/wirehub
+  #   privileged: true
+  #   network_mode: host
+  #   labels:
+  #     io.balena.features.kernel-modules: 1
+  # ghost:
+  #   image: ghost:4.32.3-alpine
+  #   network_mode: host
+  #   environment:
+  #     - url=https://goodloops.dyn.dnstools.be
+  # wireguard:
+  #   build: ./services/wesher
+  #   privileged: true
+  #   ports: 
+  #     - "7946:7946"
+  #   volumes:
+  #     - wireguard:/usr/bin
+  # upnp:
+  #   build: ./services/upnp
+  #   network_mode: host
+  # matrix-setup:
+  #   image: matrixdotorg/synapse:v1.49.2
+  #   restart: "on-failure"
+  #   command: generate
+  #   network_mode: host
+  #   environment:
+  #     - SYNAPSE_SERVER_NAME=goodmatrix.dyn.dnstools.be
+  #     - SYNAPSE_REPORT_STATS=no
+  #   volumes:
+  #     - synapse:/data
+
+  # matrix:
+  #   image: matrixdotorg/synapse:v1.49.2
+  #   restart: always
+  #   network_mode: host
+  #   volumes:
+  #     - synapse:/data
+  #   depends_on:
+  #     - matrix-setup
+
+  # netclient:
+  #   image: gravitl/netclient:v0.9.3-arm
+  #   network_mode: host  
+  #   privileged: true
+  #   environment: 
+  #     TOKEN: eyJjb3JlZG5zYWRkciI6Ijk4LjM4LjEyMy4wIiwiYXBpY29ubiI6Imdvb2RuZXRtYWtlcmFwaS5keW4uZG5zdG9vbHMuYmU6NDQzIiwiYXBpaG9zdCI6Imdvb2RuZXRtYWtlcmFwaS5keW4uZG5zdG9vbHMuYmUiLCJhcGlwb3J0IjoiODA4MSIsImdycGNjb25uIjoiZ29vZG5ldG1ha2VyZ3JwYy5keW4uZG5zdG9vbHMuYmU6NDQzIiwiZ3JwY2hvc3QiOiJnb29kbmV0bWFrZXJncnBjLmR5bi5kbnN0b29scy5iZSIsImdycGNwb3J0IjoiNTAwNTEiLCJncnBjc3NsIjoib24iLCJjaGVja2luaW50ZXJ2YWwiOiIxNSIsIm5ldHdvcmsiOiJkZXYtbmV0Iiwia2V5IjoiRU5haU9jalpQeFdMajJocCIsImxvY2FscmFuZ2UiOiIxOTIuMTY4LjUwLjAvMjQiLCJncnBjd2ciOiIiLCJncnBjd2dhZGRyIjoiIiwiZ3JwY3dncG9ydCI6IiIsImdycGN3Z3B1YmtleSI6IiIsImdycGN3Z2VuZHBvaW50IjoiIn0=
+  #   volumes:
+  #     - netclient:/etc/netclient
+  #   container_name: netclient 
+  #   cap_add: 
+  #     - NET_ADMIN
+
   caddy:
     build: ./services/caddy
     restart: always
-    depends_on:
-      - iris
     network_mode: host
+    volumes:
+      - element:/element
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+      - "4443:443"
+  # netmaker:
+  #   container_name: netmaker
+  #   image: gravitl/netmaker:v0.9.4
+  #   volumes:
+  #     - dnsconfig:/root/config/dnsconfig
+  #     - sqldata:/root/data
+  #   cap_add: 
+  #     - NET_ADMIN
+  #   restart: always
+  #   privileged: true
+  #   network_mode: host
+  #   environment:
+  #     SERVER_HOST: "98.38.123.0"
+  #     SERVER_API_CONN_STRING: "goodnetmakerapi.dyn.dnstools.be:443"
+  #     SERVER_GRPC_CONN_STRING: "goodnetmakergrpc.dyn.dnstools.be:443"
+  #     COREDNS_ADDR: "98.38.123.0"
+  #     GRPC_SSL: "on"
+  #     DNS_MODE: "on"
+  #     SERVER_HTTP_HOST: "goodnetmakerapi.dyn.dnstools.be"
+  #     SERVER_GRPC_HOST: "goodnetmakergrpc.dyn.dnstools.be"
+  #     API_PORT: "8081"
+  #     GRPC_PORT: "50051"
+  #     CLIENT_MODE: "on"
+  #     MASTER_KEY: "REPLACE_MASTER_KEY"
+  #     SERVER_GRPC_WIREGUARD: "off"
+  #     CORS_ALLOWED_ORIGIN: "*"
+  #     DISPLAY_KEYS: "on"
+  #     DATABASE: "sqlite"
+  #     NODE_ID: "netmaker-server-1"
+  #   ports:
+  #     - "51821-51830:51821-51830/udp"
+  #     - "8081:8081"
+  #     - "50051:50051"
+  # # netmaker-ui:
+  # #   container_name: netmaker-ui
+  #   depends_on:
+  #     - netmaker
+  #   image: gravitl/netmaker-ui:v0.9.3
+  #   links:
+  #     - "netmaker:api"
+  #   ports:
+  #     - "8082:80"
+  #   environment:
+  #     BACKEND_URL: "https://goodnetmakerapi.dyn.dnstools.be"
+  #   restart: always
+  # coredns:
+  #   depends_on:
+  #     - netmaker 
+  #   image: coredns/coredns
+  #   command: -conf /root/dnsconfig/Corefile
+  #   container_name: coredns
+  #   restart: always
+  #   ports:
+  #     - "192.168.50.34:53:53/udp"
+  #     - "192.168.50.34:53:53/tcp"
+  #   volumes:
+  #     - dnsconfig:/root/dnsconfig
   iris:
     build: ./services/iris
     restart: always
@@ -25,34 +150,40 @@ services:
     restart: always
     network_mode: host
   
-  db:
-    image:  arm64v8/postgres:12.9-alpine
-    container_name: pleroma_db
-    restart: always
-    environment:
-      POSTGRES_USER: pleroma
-      POSTGRES_PASSWORD: ChangeMe!
-      POSTGRES_DB: pleroma
-    volumes:
-      - postgres:/var/lib/postgresql/data
+  # # db:
+  # #   image:  arm64v8/postgres:12.9-alpine
+  # #   container_name: pleroma_db
+  # #   restart: always
+  # #   environment:
+  # #     POSTGRES_USER: pleroma
+  # #     POSTGRES_PASSWORD: ChangeMe!
+  # #     POSTGRES_DB: pleroma
+  # #   volumes:
+  # #     - postgres:/var/lib/postgresql/data
 
-  pleroma:
-    build: ./services/docker-pleroma/
-    image: pleroma
-    container_name: pleroma_web
-    restart: always
-    ports:
-      - '4000:4000'
-    volumes:
-      - uploads:/var/lib/pleroma/uploads
-      - static:/var/lib/pleroma/static
-    environment:
-      DOMAIN: goodpleroma.dyn.dnstools.be
-      INSTANCE_NAME: Pleroma
-      ADMIN_EMAIL: admin@example.com
-      NOTIFY_EMAIL: notify@example.com
-      DB_USER: pleroma
-      DB_PASS: ChangeMe!
-      DB_NAME: pleroma
-    depends_on:
-      - db
+  # # pleroma:
+  # #   build: ./services/docker-pleroma/
+  # #   image: pleroma
+  # #   container_name: pleroma_web
+  # #   restart: always
+  # #   ports:
+  # #     - '4000:4000'
+  # #   volumes:
+  # #     - uploads:/var/lib/pleroma/uploads
+  # #     - static:/var/lib/pleroma/static
+  # #   environment:
+  # #     DOMAIN: goodpleroma.dyn.dnstools.be
+  # #     INSTANCE_NAME: Pleroma
+  # #     ADMIN_EMAIL: admin@example.com
+  # #     NOTIFY_EMAIL: notify@example.com
+  # #     DB_USER: pleroma
+  # #     DB_PASS: ChangeMe!
+  # #     DB_NAME: pleroma
+  # #   depends_on:
+  # #     - db
+  # # element:
+  # #   build: ./services/element
+  # #   restart: "on-failure"
+  # #   network_mode: host
+  # #   volumes: 
+  # #     - element:/app

@@ -1,4 +1,4 @@
-goodloops.dyn.dnstools.be {
+goodloops.dyn.dnstools.be:4443 {
     rewrite /profile/* /
     reverse_proxy localhost:8080
 }
@@ -11,7 +11,35 @@ goodgun.dyn.dnstools.be {
     reverse_proxy @websockets localhost:8765
 }
 
+
+
+
 goodpleroma.dyn.dnstools.be {
     reverse_proxy localhost:4000
 }
 
+goodmatrix.dyn.dnstools.be {
+    reverse_proxy localhost:8008
+}
+
+goodelement.dyn.dnstools.be {
+    file_server browse {
+        root /element
+    }
+}
+
+goodnetmaker.dyn.dnstools.be {
+    reverse_proxy localhost:8082
+}
+
+goodnetmakerapi.dyn.dnstools.be {
+    reverse_proxy localhost:8081
+}
+
+goodnetmakergrpc.dyn.dnstools.be {
+    reverse_proxy h2c://127.0.0.1:50051 {
+	    transport http {
+			tls_insecure_skip_verify
+		}
+    }
+}
