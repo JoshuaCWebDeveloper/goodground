@@ -31,7 +31,7 @@ FROM balenalib/aarch64-debian
 WORKDIR /wireguard
 COPY --from=builder /usr/src/app/tools /
 COPY --from=builder /wesher/wesher .
-RUN install_packages kmod wget
+RUN install_packages kmod wget 
 
 COPY run.sh ./
 COPY install.sh /install.sh

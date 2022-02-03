@@ -1,0 +1,69 @@
+{
+    "logging": {
+		"logs": {
+			"": {
+				"writer": {
+                    "output": "file",
+                    "filename": "/etc/caddy/logs",
+                    "roll": false,
+                    "roll_size_mb": 0,
+                    "roll_gzip": false,
+                    "roll_local_time": false,
+                    "roll_keep": 0,
+                    "roll_keep_days": 0
+                },
+				"level": "DEBUG",
+				"sampling": {
+					"interval": 0,
+					"first": 0,
+					"thereafter": 0
+				}
+			}
+		}
+	},
+	"apps": {
+		"layer4": {
+			"servers": {
+				"example": {
+					"listen": ["0.0.0.0:80","0.0.0.0:443"],
+					"routes": [
+						{
+							"match": [
+								{
+									"http": [
+										{"host": ["goodmatrix.dyn.dnstools.be", "goodelement.dyn.dnstools.be"]}
+									]
+								}
+							],
+							"handle": [
+								{
+									"handler": "proxy",
+									"upstreams": [
+										{"dial": ["192.168.50.53:80"]}
+									]
+								}
+							]
+						},
+						{
+							"match": [
+								{
+									"tls": {
+										"sni": ["goodmatrix.dyn.dnstools.be", "goodelement.dyn.dnstools.be"]
+									}
+								}
+							],
+							"handle": [
+								{
+									"handler": "proxy",
+									"upstreams": [
+										{"dial": ["192.168.50.53:443"]}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	}
+}

@@ -13,3 +13,6 @@
 [submodule "services/element/element-web"]
 	path = services/element/element-web
 	url = https://github.com/vector-im/element-web
+[submodule "services/tailoredflow"]
+	path = services/tailoredflow
+	url = https://github.com/Omodaka9375/tailoredflow

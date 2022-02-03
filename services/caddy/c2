@@ -1,0 +1,46 @@
+goodloops.dyn.dnstools.be:4443 {
+    rewrite * /
+    reverse_proxy localhost:8080
+}
+
+goodgun.dyn.dnstools.be {
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade    websocket
+    }
+    reverse_proxy @websockets localhost:8765
+}
+
+
+
+
+goodpleroma.dyn.dnstools.be {
+    reverse_proxy localhost:8090
+}
+
+goodmatrix.dyn.dnstools.be, goodmatrix.dyn.dnstools.be:4443  {
+    reverse_proxy localhost:8008
+}
+
+
+goodelement.dyn.dnstools.be, goodelement.dyn.dnstools.be:4443  {
+    file_server browse {
+        root /element
+    }
+}
+
+goodnetmaker.dyn.dnstools.be {
+    reverse_proxy localhost:8082
+}
+
+goodnetmakerapi.dyn.dnstools.be {
+    reverse_proxy localhost:8081
+}
+
+goodnetmakergrpc.dyn.dnstools.be {
+    reverse_proxy h2c://127.0.0.1:50051 {
+	    transport http {
+			tls_insecure_skip_verify
+		}
+    }
+}
