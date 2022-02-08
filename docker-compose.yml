@@ -39,7 +39,7 @@ services:
       io.balena.features.kernel-modules: 1
 
   pihole1:
-    container_name: pihole
+    container_name: pihole1
     build: ./services/pihole
     privileged: true
     volumes:
@@ -57,7 +57,7 @@ services:
     labels:
       io.balena.features.dbus: "1"
   pihole2:
-    container_name: pihole
+    container_name: pihole2
     build: ./services/pihole
     privileged: true
     volumes:
